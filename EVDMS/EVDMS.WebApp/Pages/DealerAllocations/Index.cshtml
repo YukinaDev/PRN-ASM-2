@@ -1,0 +1,209 @@
+@page
+@model EVDMS.WebApp.Pages.DealerAllocations.IndexModel
+@{
+    ViewData["Title"] = "Phân bổ đại lý";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="page-title">Phân bổ xe cho đại lý</h1>
+        <p class="page-subtitle">Theo dõi tồn kho, lượng xe đặt hàng và cảnh báo tái cung ứng cho từng đại lý.</p>
+    </div>
+    <div class="header-actions">
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Thêm phân bổ
+        </a>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        @Model.StatusMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-3">
+        <div class="summary-card card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="summary-label">Tổng phân bổ</div>
+                <div class="summary-value text-primary">@Model.Summary.TotalAllocations</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-3">
+        <div class="summary-card card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="summary-label">Đại lý tham gia</div>
+                <div class="summary-value text-success">@Model.Summary.DistinctDealers</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-3">
+        <div class="summary-card card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="summary-label">Tồn kho thực tế</div>
+                <div class="summary-value text-warning">@Model.Summary.TotalInStock</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-3">
+        <div class="summary-card card border-0 shadow-sm position-relative">
+            <div class="card-body">
+                <div class="summary-label">Đơn hàng đang tới</div>
+                <div class="summary-value text-info">@Model.Summary.TotalOnOrder</div>
+                @if (Model.Summary.PendingAlerts > 0)
+                {
+                    <span class="badge bg-danger position-absolute top-0 end-0 me-3 mt-3">
+                        @Model.Summary.PendingAlerts cảnh báo
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 filter-toolbar">
+            <div class="col-md-4">
+                <label class="form-label">Chọn đại lý</label>
+                <select class="form-select" asp-for="DealerId" asp-items="Model.DealerOptions"></select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Chọn mẫu xe</label>
+                <select class="form-select" asp-for="VehicleModelId" asp-items="Model.VehicleModelOptions"></select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Trạng thái</label>
+                <select class="form-select" asp-for="Status" asp-items="Model.StatusOptions"></select>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary w-100">Lọc</button>
+            </div>
+            <div class="col-12 text-end">
+                <a asp-page="Index" class="btn btn-link">Đặt lại bộ lọc</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-xl-8">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Đại lý</th>
+                                <th>Mẫu xe</th>
+                                <th class="text-center">Trạng thái</th>
+                                <th class="text-end">Tồn kho</th>
+                                <th class="text-end">Đang đặt</th>
+                                <th class="text-end">Điểm đặt hàng</th>
+                                <th class="text-nowrap">Cập nhật</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @if (Model.Allocations.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    Chưa có dữ liệu phù hợp bộ lọc hiện tại.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model.Allocations)
+                            {
+                                var isLowStock = item.QuantityInStock <= item.ReorderPoint;
+                                <tr class="@(isLowStock ? "table-warning align-middle" : "align-middle")">
+                                    <td>
+                                        <div class="fw-semibold">@item.DealerName</div>
+                                        <div class="small text-muted">Reorder @item.ReorderPoint chiếc</div>
+                                    </td>
+                                    <td>@item.VehicleName</td>
+                                    <td class="text-center">
+                                        <span class="@GetStatusBadgeClass(item.Status)">@item.Status</span>
+                                    </td>
+                                    <td class="text-end fw-semibold">@item.QuantityInStock</td>
+                                    <td class="text-end">@item.QuantityOnOrder</td>
+                                    <td class="text-end">@item.ReorderPoint</td>
+                                    <td class="text-nowrap text-muted">@item.LastUpdated.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-page="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <a asp-page="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h2 class="h5 mb-0">Cảnh báo tái cung ứng</h2>
+                    <span class="badge bg-danger-subtle text-danger-emphasis px-3 py-2 rounded-pill">
+                        @Model.Alerts.Count cảnh báo
+                    </span>
+                </div>
+                @if (Model.Alerts.Count == 0)
+                {
+                    <p class="text-muted mb-0">Không có cảnh báo tồn kho ở mức báo động.</p>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var alert in Model.Alerts)
+                        {
+                            <div class="list-group-item border-0 px-0 pb-3">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <div class="fw-semibold">@alert.DealerName</div>
+                                        <div class="small text-muted">@alert.VehicleName</div>
+                                    </div>
+                                    <span class="badge bg-danger text-white">@alert.QuantityInStock / @alert.ReorderPoint</span>
+                                </div>
+                                <p class="small text-muted mb-0 mt-2">
+                                    Khuyến nghị phân bổ thêm
+                                    @(alert.ReorderPoint - alert.QuantityInStock > 0
+                                        ? alert.ReorderPoint - alert.QuantityInStock
+                                        : alert.ReorderPoint)
+                                    chiếc để duy trì lượng tồn tối thiểu.
+                                </p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private static string GetStatusBadgeClass(AllocationStatus status) =>
+        status switch
+        {
+            AllocationStatus.Fulfilled => "badge rounded-pill bg-success-subtle text-success-emphasis px-3 py-2",
+            AllocationStatus.Allocated => "badge rounded-pill bg-primary-subtle text-primary-emphasis px-3 py-2",
+            AllocationStatus.Pending => "badge rounded-pill bg-warning-subtle text-warning-emphasis px-3 py-2",
+            AllocationStatus.OnHold => "badge rounded-pill bg-danger-subtle text-danger-emphasis px-3 py-2",
+            _ => "badge rounded-pill bg-secondary-subtle text-secondary-emphasis px-3 py-2"
+        };
+}

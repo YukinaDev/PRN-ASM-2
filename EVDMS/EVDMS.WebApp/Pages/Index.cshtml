@@ -1,0 +1,117 @@
+@page
+@model EVDMS.WebApp.Pages.IndexModel
+@{
+    ViewData["Title"] = "Electric Vehicle Dealer Management";
+}
+
+<section class="hero-section rounded-4 shadow-sm p-5 mb-5">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <h1 class="display-5 fw-semibold text-white mb-3">
+                Electric Vehicle Dealer Management
+            </h1>
+            <p class="lead text-white-50 mb-4">
+                Cong cu quan tri tap trung cho he thong dai ly xe dien. Dang nhap de quan ly san pham,
+                lap ke hoach phan phoi va giam sat KPI theo vai tro cua ban.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a class="btn btn-light btn-lg" asp-area="Identity" asp-page="/Account/Login">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Dang nhap he thong
+                </a>
+                <a class="btn btn-outline-light btn-lg" asp-page="/Admin/Approvals/Index">
+                    <i class="bi bi-check2-square me-2"></i> Trung tam phe duyet
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-5 text-lg-end text-center">
+            <img src="~/images/ev-dashboard.svg" alt="EV dashboard" class="hero-illustration img-fluid" />
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h2 class="section-title mb-3">Nhanh chong lam quen hai luong nghiep vu</h2>
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="workflow-card h-100 shadow-sm border-0 rounded-4 p-4 bg-white">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="workflow-icon bg-primary-subtle text-primary-emphasis me-3">
+                        <i class="bi bi-diagram-3"></i>
+                    </div>
+                    <div>
+                        <h3 class="h5 fw-semibold mb-1">Luong 1: Phan phoi &amp; chinh sach ban hang</h3>
+                        <div class="text-muted small">Vai tro: EVM Staff, Admin, Dealer Manager</div>
+                    </div>
+                </div>
+                <ol class="workflow-steps mb-3">
+                    <li>EVM Staff cap nhat danh muc xe, phien ban, so luong ton.</li>
+                    <li>EVM Staff lap ke hoach phan phoi va chinh sach gia cho tung dai ly.</li>
+                    <li>Admin phe duyet/truoc khi ban hanh, ghi nhan ly do neu tu choi.</li>
+                    <li>Dai ly nhan thong tin phan bo va theo doi tren bang dieu khien.</li>
+                </ol>
+                <div class="d-flex gap-2">
+                    <a asp-page="/DistributionPlans/Index" class="btn btn-outline-primary btn-sm">
+                        Quan ly ke hoach
+                    </a>
+                    <a asp-page="/DistributionPlans/DealerBoard" class="btn btn-outline-secondary btn-sm">
+                        Goc nhin dai ly
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="workflow-card h-100 shadow-sm border-0 rounded-4 p-4 bg-white">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="workflow-icon bg-success-subtle text-success-emphasis me-3">
+                        <i class="bi bi-bar-chart-line"></i>
+                    </div>
+                    <div>
+                        <h3 class="h5 fw-semibold mb-1">Luong 2: Quan ly KPI &amp; danh gia dai ly</h3>
+                        <div class="text-muted small">Vai tro: EVM Staff, Admin, Dealer Manager/Staff</div>
+                    </div>
+                </div>
+                <ol class="workflow-steps mb-3">
+                    <li>EVM Staff thiet lap KPI, hop dong va cap tai khoan nguoi dung.</li>
+                    <li>Admin kiem tra va phe duyet chi tieu truoc khi ap dung.</li>
+                    <li>Dai ly ghi nhan hang ngay doanh so, ton kho, hoat dong marketing.</li>
+                    <li>EVM Staff tong hop bao cao, de xuat dieu chinh ho tro.</li>
+                </ol>
+                <div class="d-flex gap-2">
+                    <a asp-page="/DealerKpi/Index" class="btn btn-outline-primary btn-sm">
+                        Quan ly KPI
+                    </a>
+                    <a asp-page="/DealerKpi/DealerProgress" class="btn btn-outline-secondary btn-sm">
+                        Theo doi tien do
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-lg-5">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                    <h2 class="h5 fw-semibold mb-2">Huong dan nhanh</h2>
+                    <p class="text-muted mb-1">
+                        1. Su dung tai khoan duoc cap: admin@evdms.vn, staff@evdms.vn, dealermanager@evdms.vn, dealerstaff@evdms.vn (mat khau chung <code>Evdms@123</code>).
+                    </p>
+                    <p class="text-muted mb-1">
+                        2. Sau khi dang nhap, truy cap cac muc phu hop voi vai tro (Distribution Plans, Dealer KPI, Approvals).
+                    </p>
+                    <p class="text-muted mb-0">
+                        3. Theo doi thong bao trang thai tai trung tam phe duyet va cac bang tong quan cua tung module.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a class="btn btn-outline-primary btn-lg" asp-page="/Admin/Approvals/Index">
+                        Mo trung tam phe duyet
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

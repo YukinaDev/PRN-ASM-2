@@ -1,0 +1,95 @@
+@page
+@model EVDMS.WebApp.Pages.DealerKpi.DealerProgressModel
+@{
+    ViewData["Title"] = "Theo dõi KPI đại lý";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="page-title">Tiến độ KPI của đại lý</h1>
+        <p class="page-subtitle">Xem mục tiêu và kết quả thực tế đã ghi nhận theo từng kỳ KPI.</p>
+    </div>
+</div>
+
+@if (Model.Plans.Count == 0)
+{
+    <div class="alert alert-info border-0 shadow-sm">
+        <i class="bi bi-info-circle me-2"></i>
+        Chưa có kế hoạch KPI nào được phê duyệt cho đại lý của bạn.
+    </div>
+}
+else
+{
+    foreach (var plan in Model.Plans)
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-3">
+                    <div>
+                        <h2 class="h5 mb-1">Chu kỳ @plan.TargetStartDate.ToString("dd/MM/yyyy") - @plan.TargetEndDate.ToString("dd/MM/yyyy")</h2>
+                        <div class="text-muted small">Doanh thu mục tiêu: @plan.RevenueTarget.ToString("N0") ₫ · Số xe: @plan.UnitTarget</div>
+                    </div>
+                    <span class="badge rounded-pill bg-success-subtle text-success-emphasis px-3 py-2">
+                        Đã phê duyệt
+                    </span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-4">
+                        <div class="p-3 bg-white border rounded-3 shadow-sm">
+                            <div class="text-muted small">Doanh thu đã đạt</div>
+                            <div class="h5 mb-0">@plan.RevenueAchieved.ToString("N0") ₫</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="p-3 bg-white border rounded-3 shadow-sm">
+                            <div class="text-muted small">Số xe đã bán</div>
+                            <div class="h5 mb-0">@plan.UnitsAchieved</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="p-3 bg-white border rounded-3 shadow-sm">
+                            <div class="text-muted small">Vòng quay tồn kho trung bình</div>
+                            <div class="h5 mb-0">@plan.InventoryTurnoverAchieved</div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (plan.PerformanceLogs.Count == 0)
+                {
+                    <p class="text-muted mb-0">Chưa có bản ghi hoạt động bán hàng.</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th class="text-end">Xe bán</th>
+                                    <th class="text-end">Doanh thu</th>
+                                    <th class="text-end">Vòng quay tồn kho</th>
+                                    <th>Ghi chú</th>
+                                    <th>Người ghi nhận</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var log in plan.PerformanceLogs)
+                            {
+                                <tr>
+                                    <td>@log.ActivityDate.ToString("dd/MM/yyyy")</td>
+                                    <td class="text-end">@log.UnitsSold</td>
+                                    <td class="text-end">@log.Revenue.ToString("N0")</td>
+                                    <td class="text-end">@log.InventoryTurnover</td>
+                                    <td>@log.Notes</td>
+                                    <td>@log.RecordedBy</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}

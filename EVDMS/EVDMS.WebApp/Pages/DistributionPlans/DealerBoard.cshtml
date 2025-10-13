@@ -1,0 +1,65 @@
+@page
+@model EVDMS.WebApp.Pages.DistributionPlans.DealerBoardModel
+@{
+    ViewData["Title"] = "Kế hoạch phân phối của đại lý";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="page-title">Kế hoạch phân phối được phê duyệt</h1>
+        <p class="page-subtitle">Theo dõi số lượng xe và chính sách chiết khấu đã được phê duyệt cho đại lý của bạn.</p>
+    </div>
+</div>
+
+@if (Model.Plans.Count == 0)
+{
+    <div class="alert alert-info border-0 shadow-sm">
+        <i class="bi bi-info-circle me-2"></i>
+        Hiện chưa có kế hoạch phân phối nào được phê duyệt cho đại lý.
+    </div>
+}
+else
+{
+    foreach (var plan in Model.Plans)
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
+                    <div>
+                        <h2 class="h5 mb-1">@plan.PlanName</h2>
+                        <div class="text-muted small">
+                            Tháng @plan.TargetMonth.ToString("MM/yyyy") · Phê duyệt bởi @plan.ApprovedBy ?? "---"
+                        </div>
+                    </div>
+                    <span class="badge rounded-pill bg-success-subtle text-success-emphasis px-3 py-2 align-self-start align-self-md-center">
+                        Đã phê duyệt
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Mẫu xe</th>
+                                <th class="text-end">Số lượng phân bổ</th>
+                                <th class="text-end">Chiết khấu (%)</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var line in plan.Lines)
+                        {
+                            <tr>
+                                <td>@line.VehicleName</td>
+                                <td class="text-end">@line.PlannedQuantity</td>
+                                <td class="text-end">@line.DiscountRate</td>
+                                <td>@line.Notes</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+}

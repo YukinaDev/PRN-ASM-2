@@ -1,0 +1,131 @@
+@using EVDMS.DataAccess.Constants
+@using EVDMS.DataAccess.Entities
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var pageTitle = string.IsNullOrWhiteSpace(ViewData["Title"] as string)
+        ? "EVDMS"
+        : $"{ViewData["Title"]} - EVDMS";
+    var isSignedIn = SignInManager.IsSignedIn(User);
+    var isAdmin = User.IsInRole(RoleNames.Admin);
+    var isEvmStaff = User.IsInRole(RoleNames.EvmStaff) || isAdmin;
+    var isDealerManager = User.IsInRole(RoleNames.DealerManager);
+    var isDealerStaff = User.IsInRole(RoleNames.DealerStaff);
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Electric Vehicle Dealer Management</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha384-KzZi7w57QfGNTJxdkv7FpC18AJiDutLCRa14Q6gttYVOlJawVSxGInxjeRG2Jq6Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/EVDMS.styles.css" asp-append-version="true" />
+</head>
+<body class="bg-body-tertiary d-flex flex-column min-vh-100">
+    <header class="app-header shadow-sm mb-4">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand fw-semibold" asp-page="/Index">
+                    <i class="bi bi-lightning-charge-fill me-2"></i>EVDMS
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Index">
+                                <i class="bi bi-house-door me-1"></i>Trang chủ
+                            </a>
+                        </li>
+                        @if (isSignedIn && (isEvmStaff || isDealerManager || isDealerStaff))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/VehicleModels/Index">
+                                    <i class="bi bi-grid me-1"></i>Danh mục xe
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/DealerAllocations/Index">
+                                    <i class="bi bi-diagram-3 me-1"></i>Phân bổ đại lý
+                                </a>
+                            </li>
+                        }
+                        @if (isSignedIn && isEvmStaff)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/DistributionPlans/Index">
+                                    <i class="bi bi-boxes me-1"></i>Kế hoạch phân phối
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/DealerKpi/Index">
+                                    <i class="bi bi-bar-chart-line me-1"></i>KPI &amp; Báo cáo
+                                </a>
+                            </li>
+                        }
+                        @if (isSignedIn && (isDealerManager || isDealerStaff))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/DistributionPlans/DealerBoard">
+                                    <i class="bi bi-clipboard-data me-1"></i>Kế hoạch của đại lý
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/DealerKpi/DealerProgress">
+                                    <i class="bi bi-speedometer2 me-1"></i>Theo dõi KPI
+                                </a>
+                            </li>
+                        }
+                        @if (isSignedIn && isAdmin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Admin/Approvals/Index">
+                                    <i class="bi bi-check2-square me-1"></i>Phê duyệt nghiệp vụ
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="navbar-nav ms-auto align-items-center gap-3">
+                        @if (isSignedIn)
+                        {
+                            <span class="nav-link text-white-50 small">
+                                Hệ thống quản lý đại lý xe điện
+                            </span>
+                        }
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container flex-fill pb-5">
+        <main role="main" class="pb-5">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="app-footer mt-auto py-3">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <div class="small text-muted">
+                &copy; @DateTime.Now.Year EVDMS · Giải pháp quản lý kênh đại lý xe điện
+            </div>
+            <div class="small">
+                <a class="text-decoration-none me-3" asp-page="/Privacy">Chính sách bảo mật</a>
+                <a class="text-decoration-none" href="mailto:support@evdms.vn">Hỗ trợ</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,111 @@
+@page
+@model EVDMS.WebApp.Pages.DistributionPlans.CreateModel
+@{
+    ViewData["Title"] = "Tạo kế hoạch phân phối";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="page-title">Tạo kế hoạch phân phối mới</h1>
+        <p class="page-subtitle">Khai báo sản phẩm, đại lý và các mức chiết khấu dự kiến cho chu kỳ triển khai.</p>
+    </div>
+    <a asp-page="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left-circle me-1"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form method="post">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label asp-for="Plan.PlanName" class="form-label"></label>
+                    <input asp-for="Plan.PlanName" class="form-control" />
+                    <span asp-validation-for="Plan.PlanName" class="text-danger"></span>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Plan.TargetMonth" class="form-label"></label>
+                    <input asp-for="Plan.TargetMonth" class="form-control" />
+                    <span asp-validation-for="Plan.TargetMonth" class="text-danger"></span>
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="Plan.Description" class="form-label"></label>
+                    <textarea asp-for="Plan.Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Plan.Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 mb-0">Chi tiết phân bổ</h2>
+                <button type="submit" asp-page-handler="AddLine" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-plus-circle"></i> Thêm dòng phân bổ
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-nowrap">Đại lý</th>
+                            <th class="text-nowrap">Mẫu xe</th>
+                            <th class="text-nowrap">Số lượng</th>
+                            <th class="text-nowrap">Chiết khấu (%)</th>
+                            <th>Ghi chú</th>
+                            <th class="text-center" style="width: 60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for (var i = 0; i < Model.Plan.Lines.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                <select asp-for="Plan.Lines[i].DealerId" class="form-select" asp-items="Model.DealerOptions">
+                                    <option value="">-- Chọn đại lý --</option>
+                                </select>
+                                <span asp-validation-for="Plan.Lines[i].DealerId" class="text-danger"></span>
+                            </td>
+                            <td>
+                                <select asp-for="Plan.Lines[i].VehicleModelId" class="form-select" asp-items="Model.VehicleOptions">
+                                    <option value="">-- Chọn mẫu xe --</option>
+                                </select>
+                                <span asp-validation-for="Plan.Lines[i].VehicleModelId" class="text-danger"></span>
+                            </td>
+                            <td style="width: 120px;">
+                                <input asp-for="Plan.Lines[i].PlannedQuantity" class="form-control text-end" />
+                                <span asp-validation-for="Plan.Lines[i].PlannedQuantity" class="text-danger"></span>
+                            </td>
+                            <td style="width: 140px;">
+                                <div class="input-group">
+                                    <input asp-for="Plan.Lines[i].DiscountRate" class="form-control text-end" />
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <span asp-validation-for="Plan.Lines[i].DiscountRate" class="text-danger"></span>
+                            </td>
+                            <td>
+                                <input asp-for="Plan.Lines[i].Notes" class="form-control" />
+                                <span asp-validation-for="Plan.Lines[i].Notes" class="text-danger"></span>
+                            </td>
+                            <td class="text-center">
+                                <button type="submit" asp-page-handler="RemoveLine" asp-route-index="@i" class="btn btn-outline-danger btn-sm" title="Xóa dòng">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a asp-page="Index" class="btn btn-light">Huỷ</a>
+                <button type="submit" class="btn btn-primary">Lưu kế hoạch nháp</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

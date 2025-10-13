@@ -1,0 +1,79 @@
+
+@page "{id:int}"
+@model EVDMS.WebApp.Pages.DealerAllocations.EditModel
+@{
+    ViewData["Title"] = "Cập nhật phân bổ";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="page-title">Cập nhật phân bổ</h1>
+        <p class="page-subtitle">Điều chỉnh lượng hàng phân phối và trạng thái thực hiện.</p>
+    </div>
+    <a asp-page="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left-circle me-1"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form method="post" class="row g-4">
+            <input type="hidden" asp-for="Allocation.Id" />
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Allocation.DealerId" class="form-label"></label>
+                <select asp-for="Allocation.DealerId" asp-items="Model.DealerOptions" class="form-select">
+                    <option value="">-- Chọn đại lý --</option>
+                </select>
+                <span asp-validation-for="Allocation.DealerId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Allocation.VehicleModelId" class="form-label"></label>
+                <select asp-for="Allocation.VehicleModelId" asp-items="Model.VehicleModelOptions" class="form-select">
+                    <option value="">-- Chọn mẫu xe --</option>
+                </select>
+                <span asp-validation-for="Allocation.VehicleModelId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Allocation.Status" class="form-label"></label>
+                <select asp-for="Allocation.Status" class="form-select" asp-items="Model.StatusOptions"></select>
+                <span asp-validation-for="Allocation.Status" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Allocation.QuantityInStock" class="form-label"></label>
+                <input asp-for="Allocation.QuantityInStock" class="form-control" />
+                <span asp-validation-for="Allocation.QuantityInStock" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Allocation.QuantityOnOrder" class="form-label"></label>
+                <input asp-for="Allocation.QuantityOnOrder" class="form-control" />
+                <span asp-validation-for="Allocation.QuantityOnOrder" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Allocation.ReorderPoint" class="form-label"></label>
+                <input asp-for="Allocation.ReorderPoint" class="form-control" />
+                <span asp-validation-for="Allocation.ReorderPoint" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Allocation.Notes" class="form-label"></label>
+                <textarea asp-for="Allocation.Notes" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Allocation.Notes" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <a asp-page="Index" class="btn btn-light">Huỷ</a>
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

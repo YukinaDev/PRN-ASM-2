@@ -1,0 +1,76 @@
+@page "{id:int}"
+@model EVDMS.WebApp.Pages.VehicleModels.EditModel
+@{
+    ViewData["Title"] = "Cập nhật mẫu xe";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="page-title">Cập nhật mẫu xe</h1>
+        <p class="page-subtitle">Điều chỉnh thông tin sản phẩm trước khi đẩy phân bổ ra đại lý.</p>
+    </div>
+    <a asp-page="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left-circle me-1"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form method="post" class="row g-4">
+            <input type="hidden" asp-for="Vehicle.Id" />
+
+            <div class="col-12 col-md-6">
+                <label asp-for="Vehicle.Name" class="form-label"></label>
+                <input asp-for="Vehicle.Name" class="form-control" />
+                <span asp-validation-for="Vehicle.Name" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label asp-for="Vehicle.ModelCode" class="form-label"></label>
+                <input asp-for="Vehicle.ModelCode" class="form-control" />
+                <span asp-validation-for="Vehicle.ModelCode" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label asp-for="Vehicle.Status" class="form-label"></label>
+                <select asp-for="Vehicle.Status" class="form-select" asp-items="Model.StatusOptions"></select>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Vehicle.Version" class="form-label"></label>
+                <input asp-for="Vehicle.Version" class="form-control" />
+                <span asp-validation-for="Vehicle.Version" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Vehicle.Color" class="form-label"></label>
+                <input asp-for="Vehicle.Color" class="form-control" />
+                <span asp-validation-for="Vehicle.Color" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Vehicle.BasePrice" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input asp-for="Vehicle.BasePrice" class="form-control" />
+                </div>
+                <span asp-validation-for="Vehicle.BasePrice" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Vehicle.Notes" class="form-label"></label>
+                <textarea asp-for="Vehicle.Notes" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Vehicle.Notes" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <a asp-page="Index" class="btn btn-light">Huỷ</a>
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

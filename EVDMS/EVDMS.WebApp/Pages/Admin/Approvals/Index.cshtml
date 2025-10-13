@@ -1,0 +1,77 @@
+@page
+@model EVDMS.WebApp.Pages.Admin.Approvals.IndexModel
+@{
+    ViewData["Title"] = "Phê duyệt nghiệp vụ";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="page-title">Trung tâm phê duyệt</h1>
+        <p class="page-subtitle">Admin kiểm tra và phê duyệt các kế hoạch phân phối, KPI đại lý trước khi triển khai.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">Kế hoạch phân phối chờ duyệt</h2>
+                    <span class="badge bg-primary">@Model.PendingPlans.Count</span>
+                </div>
+                @if (Model.PendingPlans.Count == 0)
+                {
+                    <p class="text-muted mb-0">Không có kế hoạch nào đang chờ duyệt.</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var plan in Model.PendingPlans)
+                        {
+                            <li class="list-group-item d-flex flex-column gap-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">@plan.PlanName</div>
+                                        <div class="text-muted small">Tháng @plan.TargetMonth:MM/yyyy · @plan.CreatedBy</div>
+                                    </div>
+                                    <a asp-page="/DistributionPlans/Details" asp-route-id="@plan.Id" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">Kế hoạch KPI đại lý chờ duyệt</h2>
+                    <span class="badge bg-primary">@Model.PendingKpis.Count</span>
+                </div>
+                @if (Model.PendingKpis.Count == 0)
+                {
+                    <p class="text-muted mb-0">Không có KPI nào đang chờ duyệt.</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var plan in Model.PendingKpis)
+                        {
+                            <li class="list-group-item d-flex flex-column gap-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">@plan.DealerName</div>
+                                        <div class="text-muted small">@plan.TargetStartDate:dd/MM/yyyy - @plan.TargetEndDate:dd/MM/yyyy</div>
+                                    </div>
+                                    <a asp-page="/DealerKpi/Details" asp-route-id="@plan.Id" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>

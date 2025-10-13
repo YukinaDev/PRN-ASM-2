@@ -1,0 +1,68 @@
+@page "{id:int}"
+@model EVDMS.WebApp.Pages.DealerAllocations.DeleteModel
+@{
+    ViewData["Title"] = "Xoá phân bổ đại lý";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="page-title text-danger">Xoá phân bổ</h1>
+        <p class="page-subtitle">Hành động này sẽ huỷ cấu hình phân bổ hiện tại và không thể hoàn tác.</p>
+    </div>
+    <a asp-page="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left-circle me-1"></i> Quay lại danh sách
+    </a>
+</div>
+
+@if (Model.Allocation is null)
+{
+    <div class="alert alert-danger">Không tìm thấy dữ liệu phân bổ.</div>
+}
+else
+{
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <h2 class="h5 mb-3">Thông tin phân bổ</h2>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="detail-tile border rounded-3 p-3 h-100">
+                        <div class="text-muted small mb-1">Đại lý</div>
+                        <div class="fw-semibold">@Model.Allocation.DealerName</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detail-tile border rounded-3 p-3 h-100">
+                        <div class="text-muted small mb-1">Mẫu xe</div>
+                        <div class="fw-semibold">@Model.Allocation.VehicleName</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="detail-tile border rounded-3 p-3 h-100">
+                        <div class="text-muted small mb-1">Trạng thái</div>
+                        <div class="fw-semibold">@Model.Allocation.Status</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="detail-tile border rounded-3 p-3 h-100">
+                        <div class="text-muted small mb-1">Tồn kho hiện tại</div>
+                        <div class="fw-semibold">@Model.Allocation.QuantityInStock</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="detail-tile border rounded-3 p-3 h-100">
+                        <div class="text-muted small mb-1">Đang đặt</div>
+                        <div class="fw-semibold">@Model.Allocation.QuantityOnOrder</div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-muted small mt-3 mb-0">
+                Ghi chú: @(!string.IsNullOrWhiteSpace(Model.Allocation.Notes) ? Model.Allocation.Notes : "Không có ghi chú.")
+            </p>
+        </div>
+    </div>
+
+    <form method="post" class="d-flex justify-content-end gap-2">
+        <a asp-page="Index" class="btn btn-light">Huỷ</a>
+        <button type="submit" class="btn btn-danger">Xoá phân bổ</button>
+    </form>
+}

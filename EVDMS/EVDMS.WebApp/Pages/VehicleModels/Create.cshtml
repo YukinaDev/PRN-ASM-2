@@ -1,0 +1,104 @@
+@page
+@model EVDMS.WebApp.Pages.VehicleModels.CreateModel
+@{
+    ViewData["Title"] = "Thêm mẫu xe";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="page-title">Thêm mẫu xe mới</h1>
+        <p class="page-subtitle">Khai báo thông tin sản phẩm trước khi phân phối đến các đại lý.</p>
+    </div>
+    <a asp-page="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left-circle me-1"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form method="post" class="row g-4">
+            <div class="col-12 col-md-6">
+                <label asp-for="Vehicle.Name" class="form-label"></label>
+                <input asp-for="Vehicle.Name" class="form-control" />
+                <span asp-validation-for="Vehicle.Name" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label asp-for="Vehicle.ModelCode" class="form-label"></label>
+                <input asp-for="Vehicle.ModelCode" class="form-control" />
+                <span asp-validation-for="Vehicle.ModelCode" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label asp-for="Vehicle.Status" class="form-label"></label>
+                <select asp-for="Vehicle.Status" class="form-select" asp-items="Model.StatusOptions"></select>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Vehicle.Version" class="form-label"></label>
+                <input asp-for="Vehicle.Version" class="form-control" />
+                <span asp-validation-for="Vehicle.Version" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Vehicle.Color" class="form-label"></label>
+                <input asp-for="Vehicle.Color" class="form-control" />
+                <span asp-validation-for="Vehicle.Color" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label asp-for="Vehicle.BasePrice" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input asp-for="Vehicle.BasePrice" class="form-control" />
+                </div>
+                <span asp-validation-for="Vehicle.BasePrice" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Vehicle.Notes" class="form-label"></label>
+                <textarea asp-for="Vehicle.Notes" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Vehicle.Notes" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <a asp-page="Index" class="btn btn-light">Huỷ</a>
+                <button type="submit" class="btn btn-primary">Lưu mẫu xe</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<section class="mt-5">
+    <h2 class="h5 mb-3">Gợi ý nhập liệu</h2>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="info-card p-3 rounded-3 shadow-sm border-light-subtle">
+                <h3 class="h6 fw-semibold mb-2">Phiên bản</h3>
+                <p class="text-muted small mb-0">
+                    Nhập rõ phạm vi phân phối (ví dụ: 2025 Launch Edition) để phân biệt với các biến thể đang thử nghiệm.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-card p-3 rounded-3 shadow-sm border-light-subtle">
+                <h3 class="h6 fw-semibold mb-2">Giá cơ sở</h3>
+                <p class="text-muted small mb-0">
+                    Giá chưa bao gồm chiết khấu cho đại lý. Các mức chiết khấu sẽ cấu hình riêng trong chính sách bán hàng.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-card p-3 rounded-3 shadow-sm border-light-subtle">
+                <h3 class="h6 fw-semibold mb-2">Ghi chú nội bộ</h3>
+                <p class="text-muted small mb-0">
+                    Ghi lại các cảnh báo kỹ thuật, tình trạng chứng nhận hoặc các chiến dịch marketing liên quan.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
