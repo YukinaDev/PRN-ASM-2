@@ -1,70 +1,35 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using EVDMS.DataAccess.Entities;
-using EVDMS.DataAccess.Database;
-using Microsoft.EntityFrameworkCore;
+using EVDMS.DataAccess.Repositories;
 
 namespace EVDMS.BusinessLogic.Application.Services;
 
-public class DistributionPlanService
+public class DistributionPlanService : IDistributionPlanService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DistributionPlanService(ApplicationDbContext context)
+    public DistributionPlanService(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     public Task<List<DistributionPlan>> GetPlansForEvmStaffAsync()
     {
-        return _context.DistributionPlans
-            .Include(plan => plan.CreatedBy)
-            .Include(plan => plan.ApprovedBy)
-            .OrderByDescending(plan => plan.CreatedAt)
-            .AsNoTracking()
-            .ToListAsync();
+        return _unitOfWork.DistributionPlans.GetAllWithDetailsAsync();
     }
 
     public Task<List<DistributionPlan>> GetSubmittedPlansAsync()
     {
-        return _context.DistributionPlans
-            .Where(plan => plan.Status == PlanStatus.Submitted)
-            .Include(plan => plan.CreatedBy)
-            .Include(plan => plan.Lines)
-                .ThenInclude(line => line.Dealer)
-            .Include(plan => plan.Lines)
-                .ThenInclude(line => line.VehicleModel)
-            .OrderBy(plan => plan.TargetMonth)
-            .AsNoTracking()
-            .ToListAsync();
+        return _unitOfWork.DistributionPlans.GetSubmittedPlansAsync();
     }
 
     public Task<List<DistributionPlan>> GetApprovedPlansForDealerAsync(int dealerId)
     {
-        return _context.DistributionPlanLines
-            .Where(line => line.DealerId == dealerId && line.Plan!.Status == PlanStatus.Approved)
-            .Select(line => line.Plan!)
-            .Include(plan => plan.Lines)
-                .ThenInclude(l => l.VehicleModel)
-            .Include(plan => plan.ApprovedBy)
-            .AsNoTracking()
-            .Distinct()
-            .OrderByDescending(plan => plan.TargetMonth)
-            .ToListAsync();
+        return _unitOfWork.DistributionPlans.GetApprovedPlansForDealerAsync(dealerId);
     }
 
     public Task<DistributionPlan?> GetPlanDetailAsync(int id)
     {
-        return _context.DistributionPlans
-            .Include(plan => plan.CreatedBy)
-            .Include(plan => plan.ApprovedBy)
-            .Include(plan => plan.Lines)
-                .ThenInclude(line => line.Dealer)
-            .Include(plan => plan.Lines)
-                .ThenInclude(line => line.VehicleModel)
-            .FirstOrDefaultAsync(plan => plan.Id == id);
+        return _unitOfWork.DistributionPlans.GetByIdWithDetailsAsync(id);
     }
 
     public async Task<int> CreateDraftAsync(string userId, string planName, string? description, DateTime targetMonth, IEnumerable<DistributionPlanLine> lines)
@@ -80,14 +45,14 @@ public class DistributionPlanService
             Lines = lines.ToList()
         };
 
-        _context.DistributionPlans.Add(plan);
-        await _context.SaveChangesAsync();
+        await _unitOfWork.DistributionPlans.AddAsync(plan);
+        await _unitOfWork.SaveChangesAsync();
         return plan.Id;
     }
 
     public async Task SubmitAsync(int planId)
     {
-        var plan = await _context.DistributionPlans.FirstOrDefaultAsync(p => p.Id == planId);
+        var plan = await _unitOfWork.DistributionPlans.GetByIdAsync(planId);
         if (plan == null)
         {
             throw new InvalidOperationException("Không tìm thấy kế hoạch phân phối.");
@@ -102,12 +67,12 @@ public class DistributionPlanService
         plan.ApprovedById = null;
         plan.ApprovedAt = null;
         plan.RejectionReason = null;
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task ApproveAsync(int planId, string approverId, bool approve, string? reason)
     {
-        var plan = await _context.DistributionPlans.FirstOrDefaultAsync(p => p.Id == planId);
+        var plan = await _unitOfWork.DistributionPlans.GetByIdAsync(planId);
         if (plan == null)
         {
             throw new InvalidOperationException("Không tìm thấy kế hoạch phân phối.");
@@ -122,6 +87,6 @@ public class DistributionPlanService
         plan.ApprovedAt = DateTime.UtcNow;
         plan.Status = approve ? PlanStatus.Approved : PlanStatus.Rejected;
         plan.RejectionReason = approve ? null : reason;
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
     }
 }

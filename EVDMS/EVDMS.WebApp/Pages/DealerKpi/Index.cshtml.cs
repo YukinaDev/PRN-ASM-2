@@ -11,10 +11,10 @@ namespace EVDMS.WebApp.Pages.DealerKpi;
 [Authorize(Roles = RoleNames.Admin + "," + RoleNames.EvmStaff)]
 public class IndexModel : PageModel
 {
-    private readonly DealerKpiService _dealerKpiService;
+    private readonly IDealerKpiService _dealerKpiService;
     private readonly IMapper _mapper;
 
-    public IndexModel(DealerKpiService dealerKpiService, IMapper mapper)
+    public IndexModel(IDealerKpiService dealerKpiService, IMapper mapper)
     {
         _dealerKpiService = dealerKpiService;
         _mapper = mapper;

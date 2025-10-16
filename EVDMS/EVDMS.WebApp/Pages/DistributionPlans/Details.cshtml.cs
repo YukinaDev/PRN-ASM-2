@@ -13,12 +13,12 @@ namespace EVDMS.WebApp.Pages.DistributionPlans;
 [Authorize]
 public class DetailsModel : PageModel
 {
-    private readonly DistributionPlanService _distributionPlanService;
+    private readonly IDistributionPlanService _distributionPlanService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
 
     public DetailsModel(
-        DistributionPlanService distributionPlanService,
+        IDistributionPlanService distributionPlanService,
         UserManager<ApplicationUser> userManager,
         IMapper mapper)
     {

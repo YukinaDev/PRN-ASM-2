@@ -13,10 +13,10 @@ namespace EVDMS.WebApp.Pages.DealerAllocations;
 [Authorize(Roles = RoleNames.Admin + "," + RoleNames.EvmStaff)]
 public class CreateModel : PageModel
 {
-    private readonly DealerAllocationService _dealerAllocationService;
+    private readonly IDealerAllocationService _dealerAllocationService;
     private readonly IMapper _mapper;
 
-    public CreateModel(DealerAllocationService dealerAllocationService, IMapper mapper)
+    public CreateModel(IDealerAllocationService dealerAllocationService, IMapper mapper)
     {
         _dealerAllocationService = dealerAllocationService;
         _mapper = mapper;

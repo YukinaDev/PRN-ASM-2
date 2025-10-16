@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EVDMS.BusinessLogic\EVDMS.BusinessLogic.csproj" />
-    <ProjectReference Include="..\EVDMS.DataAccess\EVDMS.DataAccess.csproj" />
+    <ProjectReference Include="..\EVDMS.BusinessLogic\EVDMS.BusinessLogicLayer.csproj" />
+    <ProjectReference Include="..\EVDMS.DataAccess\EVDMS.DataAccessLayer.csproj" />
   </ItemGroup>
 
 </Project>

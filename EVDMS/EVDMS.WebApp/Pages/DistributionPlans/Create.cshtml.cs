@@ -14,14 +14,14 @@ namespace EVDMS.WebApp.Pages.DistributionPlans;
 [Authorize(Roles = RoleNames.Admin + "," + RoleNames.EvmStaff)]
 public class CreateModel : PageModel
 {
-    private readonly DistributionPlanService _distributionPlanService;
-    private readonly DealerAllocationService _dealerAllocationService;
+    private readonly IDistributionPlanService _distributionPlanService;
+    private readonly IDealerAllocationService _dealerAllocationService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
 
     public CreateModel(
-        DistributionPlanService distributionPlanService,
-        DealerAllocationService dealerAllocationService,
+        IDistributionPlanService distributionPlanService,
+        IDealerAllocationService dealerAllocationService,
         UserManager<ApplicationUser> userManager,
         IMapper mapper)
     {

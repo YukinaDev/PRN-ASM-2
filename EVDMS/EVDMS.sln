@@ -5,9 +5,9 @@ VisualStudioVersion = 17.14.36121.58
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVDMS.WebApp", "EVDMS.WebApp\EVDMS.WebApp.csproj", "{56262610-C0AE-4FD2-90BD-354762CE2CDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVDMS.BusinessLogic", "EVDMS.BusinessLogic\EVDMS.BusinessLogic.csproj", "{ECBF6763-B604-49D2-8A2C-1F181944DE8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVDMS.BusinessLogicLayer", "EVDMS.BusinessLogic\EVDMS.BusinessLogicLayer.csproj", "{ECBF6763-B604-49D2-8A2C-1F181944DE8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVDMS.DataAccess", "EVDMS.DataAccess\EVDMS.DataAccess.csproj", "{4F04B682-927D-47D5-8833-848961F1645E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVDMS.DataAccessLayer", "EVDMS.DataAccess\EVDMS.DataAccessLayer.csproj", "{4F04B682-927D-47D5-8833-848961F1645E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

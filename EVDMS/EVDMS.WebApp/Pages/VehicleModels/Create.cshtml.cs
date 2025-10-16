@@ -13,10 +13,10 @@ namespace EVDMS.WebApp.Pages.VehicleModels;
 [Authorize(Roles = RoleNames.Admin + "," + RoleNames.EvmStaff)]
 public class CreateModel : PageModel
 {
-    private readonly VehicleCatalogService _vehicleCatalogService;
+    private readonly IVehicleCatalogService _vehicleCatalogService;
     private readonly IMapper _mapper;
 
-    public CreateModel(VehicleCatalogService vehicleCatalogService, IMapper mapper)
+    public CreateModel(IVehicleCatalogService vehicleCatalogService, IMapper mapper)
     {
         _vehicleCatalogService = vehicleCatalogService;
         _mapper = mapper;

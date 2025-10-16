@@ -13,10 +13,10 @@ namespace EVDMS.WebApp.Pages.VehicleModels;
 [Authorize]
 public class IndexModel : PageModel
 {
-    private readonly VehicleCatalogService _vehicleCatalogService;
+    private readonly IVehicleCatalogService _vehicleCatalogService;
     private readonly IMapper _mapper;
 
-    public IndexModel(VehicleCatalogService vehicleCatalogService, IMapper mapper)
+    public IndexModel(IVehicleCatalogService vehicleCatalogService, IMapper mapper)
     {
         _vehicleCatalogService = vehicleCatalogService;
         _mapper = mapper;
