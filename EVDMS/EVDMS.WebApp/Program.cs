@@ -3,6 +3,7 @@ using EVDMS.BusinessLogic.Application.Services;
 using EVDMS.DataAccess.Constants;
 using EVDMS.DataAccess.Database;
 using EVDMS.DataAccess.Entities;
+using EVDMS.DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,10 +33,15 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddScoped<VehicleCatalogService>();
-builder.Services.AddScoped<DealerAllocationService>();
-builder.Services.AddScoped<DistributionPlanService>();
-builder.Services.AddScoped<DealerKpiService>();
+
+// Register Unit of Work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Register Services with Interfaces
+builder.Services.AddScoped<IVehicleCatalogService, VehicleCatalogService>();
+builder.Services.AddScoped<IDealerAllocationService, DealerAllocationService>();
+builder.Services.AddScoped<IDistributionPlanService, DistributionPlanService>();
+builder.Services.AddScoped<IDealerKpiService, DealerKpiService>();
 
 builder.Services.AddRazorPages(options =>
 {

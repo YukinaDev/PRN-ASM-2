@@ -10,13 +10,13 @@ namespace EVDMS.WebApp.Pages.Admin.Approvals;
 [Authorize(Roles = RoleNames.Admin)]
 public class IndexModel : PageModel
 {
-    private readonly DistributionPlanService _distributionPlanService;
-    private readonly DealerKpiService _dealerKpiService;
+    private readonly IDistributionPlanService _distributionPlanService;
+    private readonly IDealerKpiService _dealerKpiService;
     private readonly IMapper _mapper;
 
     public IndexModel(
-        DistributionPlanService distributionPlanService,
-        DealerKpiService dealerKpiService,
+        IDistributionPlanService distributionPlanService,
+        IDealerKpiService dealerKpiService,
         IMapper mapper)
     {
         _distributionPlanService = distributionPlanService;

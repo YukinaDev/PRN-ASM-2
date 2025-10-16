@@ -14,14 +14,14 @@ namespace EVDMS.WebApp.Pages.DealerKpi;
 [Authorize(Roles = RoleNames.Admin + "," + RoleNames.EvmStaff)]
 public class CreateModel : PageModel
 {
-    private readonly DealerKpiService _dealerKpiService;
-    private readonly DealerAllocationService _dealerAllocationService;
+    private readonly IDealerKpiService _dealerKpiService;
+    private readonly IDealerAllocationService _dealerAllocationService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
 
     public CreateModel(
-        DealerKpiService dealerKpiService,
-        DealerAllocationService dealerAllocationService,
+        IDealerKpiService dealerKpiService,
+        IDealerAllocationService dealerAllocationService,
         UserManager<ApplicationUser> userManager,
         IMapper mapper)
     {

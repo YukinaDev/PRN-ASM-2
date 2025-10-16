@@ -12,12 +12,12 @@ namespace EVDMS.WebApp.Pages.DealerKpi;
 [Authorize(Roles = RoleNames.DealerManager + "," + RoleNames.DealerStaff)]
 public class DealerProgressModel : PageModel
 {
-    private readonly DealerKpiService _dealerKpiService;
+    private readonly IDealerKpiService _dealerKpiService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
 
     public DealerProgressModel(
-        DealerKpiService dealerKpiService,
+        IDealerKpiService dealerKpiService,
         UserManager<ApplicationUser> userManager,
         IMapper mapper)
     {

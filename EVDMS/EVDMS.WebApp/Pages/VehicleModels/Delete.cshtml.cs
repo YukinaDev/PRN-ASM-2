@@ -11,10 +11,10 @@ namespace EVDMS.WebApp.Pages.VehicleModels;
 [Authorize(Roles = RoleNames.Admin + "," + RoleNames.EvmStaff)]
 public class DeleteModel : PageModel
 {
-    private readonly VehicleCatalogService _vehicleCatalogService;
+    private readonly IVehicleCatalogService _vehicleCatalogService;
     private readonly IMapper _mapper;
 
-    public DeleteModel(VehicleCatalogService vehicleCatalogService, IMapper mapper)
+    public DeleteModel(IVehicleCatalogService vehicleCatalogService, IMapper mapper)
     {
         _vehicleCatalogService = vehicleCatalogService;
         _mapper = mapper;

@@ -11,10 +11,10 @@ namespace EVDMS.WebApp.Pages.DistributionPlans;
 [Authorize(Roles = RoleNames.Admin + "," + RoleNames.EvmStaff)]
 public class IndexModel : PageModel
 {
-    private readonly DistributionPlanService _distributionPlanService;
+    private readonly IDistributionPlanService _distributionPlanService;
     private readonly IMapper _mapper;
 
-    public IndexModel(DistributionPlanService distributionPlanService, IMapper mapper)
+    public IndexModel(IDistributionPlanService distributionPlanService, IMapper mapper)
     {
         _distributionPlanService = distributionPlanService;
         _mapper = mapper;

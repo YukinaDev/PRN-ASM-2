@@ -13,10 +13,10 @@ namespace EVDMS.WebApp.Pages.DealerAllocations;
 [Authorize]
 public class IndexModel : PageModel
 {
-    private readonly DealerAllocationService _dealerAllocationService;
+    private readonly IDealerAllocationService _dealerAllocationService;
     private readonly IMapper _mapper;
 
-    public IndexModel(DealerAllocationService dealerAllocationService, IMapper mapper)
+    public IndexModel(IDealerAllocationService dealerAllocationService, IMapper mapper)
     {
         _dealerAllocationService = dealerAllocationService;
         _mapper = mapper;

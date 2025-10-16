@@ -11,10 +11,10 @@ namespace EVDMS.WebApp.Pages.DealerAllocations;
 [Authorize(Roles = RoleNames.Admin + "," + RoleNames.EvmStaff)]
 public class DeleteModel : PageModel
 {
-    private readonly DealerAllocationService _dealerAllocationService;
+    private readonly IDealerAllocationService _dealerAllocationService;
     private readonly IMapper _mapper;
 
-    public DeleteModel(DealerAllocationService dealerAllocationService, IMapper mapper)
+    public DeleteModel(IDealerAllocationService dealerAllocationService, IMapper mapper)
     {
         _dealerAllocationService = dealerAllocationService;
         _mapper = mapper;
