@@ -120,8 +120,10 @@ public class DetailsModel : PageModel
 
     private void SetPermissions(DistributionPlan entity)
     {
+        // Chỉ cho phép submit khi status = Draft
+        // Sau khi approve hoặc reject thì không thể submit lại
         CanSubmit = (User.IsInRole(RoleNames.Admin) || User.IsInRole(RoleNames.EvmStaff))
-            && (entity.Status == PlanStatus.Draft || entity.Status == PlanStatus.Rejected);
+            && entity.Status == PlanStatus.Draft;
 
         CanApprove = User.IsInRole(RoleNames.Admin) && entity.Status == PlanStatus.Submitted;
         CanViewDealerDetail = User.IsInRole(RoleNames.DealerManager) || User.IsInRole(RoleNames.DealerStaff);

@@ -6,10 +6,12 @@ namespace EVDMS.BusinessLogic.Application.Services;
 public class DealerKpiService : IDealerKpiService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificationService _notificationService;
 
-    public DealerKpiService(IUnitOfWork unitOfWork)
+    public DealerKpiService(IUnitOfWork unitOfWork, INotificationService notificationService)
     {
         _unitOfWork = unitOfWork;
+        _notificationService = notificationService;
     }
 
     public Task<List<DealerKpiPlan>> GetPlansForEvmStaffAsync()
@@ -50,11 +52,28 @@ public class DealerKpiService : IDealerKpiService
             throw new InvalidOperationException("Không tìm thấy kế hoạch KPI.");
         }
 
+        if (plan.Status != PlanStatus.Draft)
+        {
+            throw new InvalidOperationException("Chỉ có thể gửi kế hoạch ở trạng thái nháp. Kế hoạch đã được phê duyệt hoặc từ chối không thể gửi lại.");
+        }
+
         plan.Status = PlanStatus.Submitted;
         plan.ApprovedById = null;
         plan.ApprovedAt = null;
         plan.RejectionReason = null;
         await _unitOfWork.SaveChangesAsync();
+
+        var dealer = await _unitOfWork.Dealers.GetByIdAsync(plan.DealerId);
+        var planName = $"KPI {dealer?.Name ?? "Unknown"} ({plan.TargetStartDate:dd/MM/yyyy} - {plan.TargetEndDate:dd/MM/yyyy})";
+        
+        if (!string.IsNullOrEmpty(plan.CreatedById))
+        {
+            await _notificationService.NotifyPlanSubmittedAsync(
+                "DealerKpi",
+                plan.Id,
+                planName,
+                plan.CreatedById);
+        }
     }
 
     public async Task ApproveAsync(int planId, string approverId, bool approve, string? reason)
@@ -75,6 +94,20 @@ public class DealerKpiService : IDealerKpiService
         plan.Status = approve ? PlanStatus.Approved : PlanStatus.Rejected;
         plan.RejectionReason = approve ? null : reason;
         await _unitOfWork.SaveChangesAsync();
+
+        var dealer = await _unitOfWork.Dealers.GetByIdAsync(plan.DealerId);
+        var planName = $"KPI {dealer?.Name ?? "Unknown"} ({plan.TargetStartDate:dd/MM/yyyy} - {plan.TargetEndDate:dd/MM/yyyy})";
+        
+        if (!string.IsNullOrEmpty(plan.CreatedById))
+        {
+            await _notificationService.NotifyPlanApprovedAsync(
+                "DealerKpi",
+                plan.Id,
+                planName,
+                plan.CreatedById,
+                approve,
+                reason);
+        }
     }
 
     public async Task RecordPerformanceAsync(DealerPerformanceLog log)

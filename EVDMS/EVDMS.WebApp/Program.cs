@@ -4,6 +4,7 @@ using EVDMS.DataAccess.Constants;
 using EVDMS.DataAccess.Database;
 using EVDMS.DataAccess.Entities;
 using EVDMS.DataAccess.Repositories;
+using EVDMS.WebApp.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,11 +38,16 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 // Register Unit of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Register SignalR
+builder.Services.AddSignalR();
+builder.Services.AddScoped<ISignalRHubProxy, SignalRHubProxy>();
+
 // Register Services with Interfaces
 builder.Services.AddScoped<IVehicleCatalogService, VehicleCatalogService>();
 builder.Services.AddScoped<IDealerAllocationService, DealerAllocationService>();
 builder.Services.AddScoped<IDistributionPlanService, DistributionPlanService>();
 builder.Services.AddScoped<IDealerKpiService, DealerKpiService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddRazorPages(options =>
 {
@@ -84,6 +90,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapGet("/", context =>
 {

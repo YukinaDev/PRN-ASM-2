@@ -13,6 +13,7 @@ public class UnitOfWork : IUnitOfWork
     public IDistributionPlanRepository DistributionPlans { get; }
     public IDealerKpiPlanRepository DealerKpiPlans { get; }
     public IRepository<DealerPerformanceLog> PerformanceLogs { get; }
+    public IUserRepository Users { get; }
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -23,6 +24,7 @@ public class UnitOfWork : IUnitOfWork
         DistributionPlans = new DistributionPlanRepository(_context);
         DealerKpiPlans = new DealerKpiPlanRepository(_context);
         PerformanceLogs = new Repository<DealerPerformanceLog>(_context);
+        Users = new UserRepository(_context);
     }
 
     public async Task<int> SaveChangesAsync()

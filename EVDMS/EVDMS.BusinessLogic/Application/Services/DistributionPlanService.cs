@@ -6,10 +6,12 @@ namespace EVDMS.BusinessLogic.Application.Services;
 public class DistributionPlanService : IDistributionPlanService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificationService _notificationService;
 
-    public DistributionPlanService(IUnitOfWork unitOfWork)
+    public DistributionPlanService(IUnitOfWork unitOfWork, INotificationService notificationService)
     {
         _unitOfWork = unitOfWork;
+        _notificationService = notificationService;
     }
 
     public Task<List<DistributionPlan>> GetPlansForEvmStaffAsync()
@@ -58,9 +60,9 @@ public class DistributionPlanService : IDistributionPlanService
             throw new InvalidOperationException("Không tìm thấy kế hoạch phân phối.");
         }
 
-        if (plan.Status != PlanStatus.Draft && plan.Status != PlanStatus.Rejected)
+        if (plan.Status != PlanStatus.Draft)
         {
-            throw new InvalidOperationException("Chỉ có thể gửi kế hoạch ở trạng thái nháp hoặc bị từ chối.");
+            throw new InvalidOperationException("Chỉ có thể gửi kế hoạch ở trạng thái nháp. Kế hoạch đã được phê duyệt hoặc từ chối không thể gửi lại.");
         }
 
         plan.Status = PlanStatus.Submitted;
@@ -68,6 +70,15 @@ public class DistributionPlanService : IDistributionPlanService
         plan.ApprovedAt = null;
         plan.RejectionReason = null;
         await _unitOfWork.SaveChangesAsync();
+
+        if (!string.IsNullOrEmpty(plan.CreatedById))
+        {
+            await _notificationService.NotifyPlanSubmittedAsync(
+                "DistributionPlan",
+                plan.Id,
+                plan.PlanName,
+                plan.CreatedById);
+        }
     }
 
     public async Task ApproveAsync(int planId, string approverId, bool approve, string? reason)
@@ -88,5 +99,16 @@ public class DistributionPlanService : IDistributionPlanService
         plan.Status = approve ? PlanStatus.Approved : PlanStatus.Rejected;
         plan.RejectionReason = approve ? null : reason;
         await _unitOfWork.SaveChangesAsync();
+
+        if (!string.IsNullOrEmpty(plan.CreatedById))
+        {
+            await _notificationService.NotifyPlanApprovedAsync(
+                "DistributionPlan",
+                plan.Id,
+                plan.PlanName,
+                plan.CreatedById,
+                approve,
+                reason);
+        }
     }
 }

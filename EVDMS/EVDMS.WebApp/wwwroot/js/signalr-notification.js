@@ -1,0 +1,205 @@
+// SignalR Notification Client
+(function () {
+    let connection = null;
+    let notificationCount = 0;
+    const MAX_NOTIFICATIONS = 50;
+
+    function initSignalR() {
+        if (!window.signalR) {
+            console.error('SignalR library not loaded');
+            return;
+        }
+
+        connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveNotification", function (data) {
+            notificationCount++;
+            updateNotificationBadge();
+            showToastNotification(data);
+            addNotificationToList(data);
+            playNotificationSound();
+            
+            // Update pending approval badge khi có notification mới
+            updatePendingApprovalBadge();
+        });
+
+        connection.onreconnecting(() => {
+            console.log("SignalR reconnecting...");
+        });
+
+        connection.onreconnected(() => {
+            console.log("SignalR reconnected");
+            // Refresh pending count sau khi reconnect
+            updatePendingApprovalBadge();
+        });
+
+        connection.onclose(() => {
+            console.log("SignalR disconnected");
+        });
+
+        startConnection();
+    }
+
+    function startConnection() {
+        connection.start()
+            .then(() => {
+                console.log("SignalR Connected");
+                // Load pending count ngay sau khi connect
+                updatePendingApprovalBadge();
+            })
+            .catch(err => {
+                console.error("SignalR Connection Error:", err);
+                setTimeout(startConnection, 5000);
+            });
+    }
+
+    function updateNotificationBadge() {
+        const badge = document.getElementById('notification-badge');
+        if (badge) {
+            badge.textContent = notificationCount;
+            badge.style.display = notificationCount > 0 ? 'inline-block' : 'none';
+        }
+    }
+
+    function updatePendingApprovalBadge() {
+        const badge = document.getElementById('pending-approval-badge');
+        if (!badge) return;
+        
+        fetch('/Admin/GetPendingCount')
+            .then(response => response.text())
+            .then(count => {
+                const num = parseInt(count.trim());
+                badge.textContent = num;
+                badge.style.display = num > 0 ? 'inline-block' : 'none';
+            })
+            .catch(err => {
+                console.error('Failed to fetch pending count:', err);
+            });
+    }
+
+    function showToastNotification(data) {
+        const toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) return;
+
+        const toastId = 'toast-' + Date.now();
+        const iconClass = data.type === 'PlanApproved' ? 'bi-check-circle text-success' :
+                         data.type === 'PlanRejected' ? 'bi-x-circle text-danger' :
+                         'bi-bell text-primary';
+
+        const toast = document.createElement('div');
+        toast.id = toastId;
+        toast.className = 'toast align-items-center border-0 shadow-lg';
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi ${iconClass} me-2 fs-4"></i>
+                    <strong>${data.message}</strong>
+                    ${data.reason ? '<br><small class="text-muted">' + data.reason + '</small>' : ''}
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        const bsToast = new bootstrap.Toast(toast, { delay: 5000 });
+        bsToast.show();
+
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    }
+
+    function addNotificationToList(data) {
+        const list = document.getElementById('notification-list');
+        if (!list) return;
+
+        const emptyMessage = list.querySelector('.text-muted');
+        if (emptyMessage) {
+            emptyMessage.remove();
+        }
+
+        const item = document.createElement('a');
+        item.className = 'dropdown-item notification-item';
+        item.href = getNotificationLink(data);
+
+        const iconClass = data.type === 'PlanApproved' ? 'bi-check-circle text-success' :
+                         data.type === 'PlanRejected' ? 'bi-x-circle text-danger' :
+                         'bi-bell text-primary';
+
+        item.innerHTML = `
+            <div class="d-flex align-items-start">
+                <i class="bi ${iconClass} me-2 fs-5"></i>
+                <div class="flex-grow-1">
+                    <div class="fw-semibold">${data.message}</div>
+                    ${data.reason ? '<small class="text-muted">' + data.reason + '</small>' : ''}
+                    <div class="small text-muted mt-1">${formatTime(data.timestamp)}</div>
+                </div>
+            </div>
+        `;
+
+        list.insertBefore(item, list.firstChild);
+
+        if (list.children.length > MAX_NOTIFICATIONS) {
+            list.removeChild(list.lastChild);
+        }
+    }
+
+    function getNotificationLink(data) {
+        if (data.planType === 'DistributionPlan') {
+            return '/DistributionPlans/Details/' + data.planId;
+        } else if (data.planType === 'DealerKpi') {
+            return '/DealerKpi/Details/' + data.planId;
+        }
+        return '#';
+    }
+
+    function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = Math.floor((now - date) / 1000);
+
+        if (diff < 60) return 'Vừa xong';
+        if (diff < 3600) return Math.floor(diff / 60) + ' phút trước';
+        if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
+        return date.toLocaleDateString('vi-VN');
+    }
+
+    function playNotificationSound() {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBDGH0fPTgjMGHm7A7+OZSA0PVaro7J1RDwxOouLwumoeBzWM0/TQhDQHIXPE8OCUSQwQW6/p6p1SDwxOouHwumoeBzWM0/TQhDQHIXPE8N+USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N+USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+HvumoeBzWM0/TPhDQHIXPE8N6USQwQW6/o6p1SDgxNo+Hv');
+    }
+
+    function clearAllNotifications() {
+        notificationCount = 0;
+        updateNotificationBadge();
+        
+        const list = document.getElementById('notification-list');
+        if (list) {
+            list.innerHTML = '<div class="dropdown-item text-muted text-center">Không có thông báo</div>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initSignalR();
+
+        const clearBtn = document.getElementById('clear-notifications');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', clearAllNotifications);
+        }
+
+        const notificationBell = document.getElementById('notification-bell');
+        if (notificationBell) {
+            notificationBell.addEventListener('click', function() {
+                notificationCount = 0;
+                updateNotificationBadge();
+            });
+        }
+    });
+})();

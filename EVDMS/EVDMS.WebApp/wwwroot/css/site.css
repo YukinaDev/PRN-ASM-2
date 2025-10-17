@@ -289,3 +289,42 @@ body {
 .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem #ffffff, 0 0 0 0.25rem rgba(37, 99, 235, 0.45);
 }
+
+/* Notification Styles */
+#notification-badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.45rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.notification-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s ease;
+}
+
+.notification-item:hover {
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.toast {
+    min-width: 300px;
+}
+
+.toast-body {
+    display: flex;
+    align-items: center;
+}

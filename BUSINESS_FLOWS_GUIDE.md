@@ -37,7 +37,7 @@ EVMStaff              Admin                DealerManager
 **Mục đích:** Lập kế hoạch phân phối xe cho các đại lý trong tháng
 
 **Dữ liệu cần nhập:**
-- **Tên kế hoạch** (VD: "Phân phối T10/2025")
+- **Tên kế hoạch** (VD: "Phân phối T10/2025") 
 - **Tháng mục tiêu** (Target Month)
 - **Mô tả** (Description - optional)
 - **Chi tiết phân phối** (Lines):

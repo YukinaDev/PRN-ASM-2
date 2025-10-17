@@ -10,6 +10,7 @@ public interface IUnitOfWork : IDisposable
     IDistributionPlanRepository DistributionPlans { get; }
     IDealerKpiPlanRepository DealerKpiPlans { get; }
     IRepository<DealerPerformanceLog> PerformanceLogs { get; }
+    IUserRepository Users { get; }
     
     Task<int> SaveChangesAsync();
 }
